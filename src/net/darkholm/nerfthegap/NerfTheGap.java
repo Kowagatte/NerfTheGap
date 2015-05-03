@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * A plugin that adds a cooldown to God apple consumption
@@ -24,7 +24,7 @@ public class NerfTheGap extends JavaPlugin implements Listener {
     In Java 7 and later version, new ArrayList<Player>() can simply be written new ArrayList<>() but in order to
     provide compatibility with Java 6 and earlier versions, this is not done here.
      */
-    private ArrayList<Player> cooldown = new ArrayList<Player>();
+    private HashSet<String> cooldown = new HashSet<String>();
 
     @Override
     public void onEnable() {
@@ -35,7 +35,7 @@ public class NerfTheGap extends JavaPlugin implements Listener {
     public void onGappleUse(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) &&
                 event.getItem().getType() == Material.GOLDEN_APPLE && event.getItem().getDurability() == 1) {
-            if (this.cooldown.contains(event.getPlayer())) {
+            if (this.cooldown.contains(event.getPlayer().getName())) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage(ChatColor.RED + "You cannot eat another God Apple yet.");
             }
@@ -46,12 +46,12 @@ public class NerfTheGap extends JavaPlugin implements Listener {
     public void onGappleConsume(PlayerItemConsumeEvent event) {
         if (event.getItem().getType() == Material.GOLDEN_APPLE && event.getItem().getDurability() == 1) {
             final Player player = event.getPlayer();
-            this.cooldown.add(player);
+            this.cooldown.add(player.getName());
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
                 @Override
                 public void run() {
                     player.sendMessage(ChatColor.DARK_AQUA + "You can now eat a God Apple again.");
-                    NerfTheGap.this.cooldown.remove(player);
+                    NerfTheGap.this.cooldown.remove(player.getName());
                 }
             }, 1200L);
         }
