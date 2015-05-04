@@ -39,12 +39,16 @@ public class NerfTheGap extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onGappleUse(PlayerInteractEvent event) {
-        if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) &&
-                event.getItem().getType() == Material.GOLDEN_APPLE && event.getItem().getDurability() == 1) {
-            if (this.cooldown.contains(event.getPlayer().getUniqueId())) {
-                event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "You cannot eat another God Apple yet.");
-            }
+    	Player player = event.getPlayer();
+        if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+        	if(player.getItemInHand() != null){
+                if(player.getItemInHand().getType() == Material.GOLDEN_APPLE && event.getItem().getDurability() == 1) {
+                	if (this.cooldown.contains(event.getPlayer().getUniqueId())) {
+                		event.setCancelled(true);
+                		event.getPlayer().sendMessage(ChatColor.RED + "You cannot eat another God Apple yet.");
+                	}
+                }
+        	}
         }
     }
 
